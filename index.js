@@ -9,31 +9,20 @@ const unsplash = new Unsplash({
     callbackUrl,
     bearerToken
 });
+const { downloadFromURL } = require('./download');
 
-console.log(unsplash);
+// console.log(unsplash);
 
-unsplash.currentUser.profile()
+unsplash.search.collections("wallpaper", 1, 1)
     .then(toJson)
-    .then(json => {
-        // Your code
-        console.log(json);
-    });
-
-// const authenticationUrl = unsplash.auth.getAuthenticationUrl([
-//     "public",
-//     "read_user",
-//     "write_user",
-//     "read_photos",
-//     "write_photos"
-// ]);
-
-// location.assign(authenticationUrl);
-
-// unsplash.auth.userAuthentication(query.code)
-//     .then(toJson)
-//     .then(json => {
-//         unsplash.auth.setBearerToken(json.access_token);
-//     });
-
-
-
+    .then(res => {
+        const url = res["results"][0]["cover_photo"]["urls"]["full"];
+        console.log(url);
+        downloadFromURL(url, "wall-1.jpg", () => {
+            console.log("Image downloaded");
+        });
+        // unsplash.photos.downloadPhoto(res["results"][0]);
+    })
+    .catch(err => {
+        console.log(err);
+    })
