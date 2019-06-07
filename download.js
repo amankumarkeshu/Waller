@@ -1,11 +1,17 @@
 const request = require('request');
 const fs = require('fs');
 
-const downloadFromURL = (uri, filename, callback) => {
+const downloadFromURL = (uri, filename) => {
     console.log(uri);
-    request(uri)
+    request
+        .get(uri)
+        .on('error', (err) => {
+            return console.log(err, "Invalid img");
+        })
         .pipe(fs.createWriteStream(filename))
-        .on('close', callback);
+        .on('close', () => {
+            console.log("Image downloaded")
+        });
 };
 
 module.exports = {

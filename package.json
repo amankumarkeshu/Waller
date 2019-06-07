@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": ""
   },
   "author": "Sanskar Agarwal",
   "license": "Apache-2.0",
   "dependencies": {
     "commander": "^2.20.0",
+    "inquirer": "^6.3.1",
     "node-fetch": "^2.6.0",
     "request": "^2.88.0",
     "unsplash-js": "^5.0.0"
