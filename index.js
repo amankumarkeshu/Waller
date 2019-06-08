@@ -1,17 +1,15 @@
 'use strict';
 
 const Unsplash = require('unsplash-js').default;
+const fs = require('fs');
 const { toJson } = require('unsplash-js');
-const { applicationId, secret, callbackUrl, bearerToken } = require('./config');
+const { bearerToken } = require('./config');
 const unsplash = new Unsplash({
-    applicationId,
-    secret,
-    callbackUrl,
     bearerToken
 });
 const { downloadFromURL } = require('./download');
 
-var searchPhoto = (input, page_no) => {
+const searchPhoto = (input, page_no) => {
     return new Promise((resolve, reject) => {
         unsplash.search.photos(input, page_no, 1)
             .then(toJson)
@@ -30,7 +28,7 @@ var searchPhoto = (input, page_no) => {
     });
 }
 
-var searchCollection = (input, page_no) => {
+const searchCollection = (input, page_no) => {
     return new Promise((resolve, reject) => {
         unsplash.search.collections(input, page_no, 1)
             .then(toJson)
@@ -49,12 +47,12 @@ var searchCollection = (input, page_no) => {
     });
 }
 
-var searchDownload = (input, option, callback) => {
+const searchDownload = (input, option, callback) => {
     if (option === 'collection') {
         searchCollection(input, 1)
             .then((res) => {
                 const resultLen = res["total"];
-                var imgno = Math.floor(Math.random() * resultLen);
+                let imgno = Math.floor(Math.random() * resultLen);
                 if (imgno === 0 && resultLen) {
                     imgno += 1;
                 }
@@ -70,16 +68,19 @@ var searchDownload = (input, option, callback) => {
         searchPhoto(input, 1)
             .then((res) => {
                 const resultLen = res["total"];
-                var imgno = Math.floor(Math.random() * resultLen);
+                let imgno = Math.floor(Math.random() * resultLen);
                 if (imgno === 0 && resultLen) {
                     imgno += 1;
                 }
                 searchPhoto(input, imgno)
                     .then((res) => {
                         const url = res["results"][0]["urls"]["full"];
-                        const imgName = res["results"][0]["id"];
-                        console.log(url);
-                        downloadFromURL(url, imgName)
+                        const imgName = res["results"][0]["id"] + ".jpg";
+                        fs.appendFile('preferences.txt', input+'\n', function (err) {
+                            if (err) return;
+                        });
+                        // console.log(`Image URL: ${url}`);
+                        callback(undefined, url, imgName); // err is undefined
                     })
                     .catch((err) => {
                         callback(err);

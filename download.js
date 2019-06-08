@@ -1,17 +1,20 @@
 const request = require('request');
 const fs = require('fs');
+const path = require('path');
 
 const downloadFromURL = (uri, filename) => {
-    console.log(uri);
-    request
+    const filePath = path.join(__dirname, 'images', filename);
+    return new Promise((resolve, reject) => {
+        request
         .get(uri)
         .on('error', (err) => {
-            return console.log(err, "Invalid img");
+            return reject(err);
         })
-        .pipe(fs.createWriteStream(filename))
+        .pipe(fs.createWriteStream(filePath))
         .on('close', () => {
-            console.log("Image downloaded")
+            return resolve("Image Downloaded");
         });
+    });
 };
 
 module.exports = {

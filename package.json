@@ -12,6 +12,7 @@
     "commander": "^2.20.0",
     "inquirer": "^6.3.1",
     "node-fetch": "^2.6.0",
+    "open": "^6.3.0",
     "request": "^2.88.0",
     "unsplash-js": "^5.0.0"
   }

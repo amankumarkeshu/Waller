@@ -3,8 +3,8 @@
 
 const program = require('commander');
 const inquirer = require('inquirer');
-const { downloadFromUrl } = require('./download');
-const { searchDownload } = require('./index');
+const fs = require('fs');
+const { heavyLift } = require('./main');
 
 program
     .version('0.0.1')
@@ -28,28 +28,31 @@ program
     .option('-c, --collection', 'Search from collection')
     .description('Get Image with given keyword')
     .action((keyword, cmd) => {
-        var inp = keyword.toString().trim().toLowerCase();
-        var opt = (cmd.collection ? 'collection' : 'photo');
-        searchDownload(inp, opt, (err) => {
-            if (err) {
-                return console.log(err);
-            }
-        });
+        let inp = keyword.toString().trim().toLowerCase();
+        let opt = (cmd.collection ? 'collection' : 'photo');
+        heavyLift(inp, opt);
     });
 
 program
     .command('random')
     .alias('r')
-    .description('Get Random Image')
+    .description('Set a Random wallpaper')
     .action(() => {
-        getRandomImg();
+        fs.readFile('preferences.txt', function (err, data) {
+            if (err) {
+                return heavyLift('wallpaper', 'photo');
+            }
+            var lines = data.toString().split('\n');
+            var keyName = lines[Math.floor(Math.random() * lines.length)] || 'wallpaper';
+            heavyLift(keyName, 'photo');
+        })
     });
 
 program
     .command('config')
-    .description('Set Unsplash API token')
+    .description('Set Unsplash API token. More information available at https://api.unsplash.com')
     .action(() => {
-        // Ask if user has token or not and decide accordingly
+        // Ask if user has token or not and decide accordingly (later)
         inquirer
             .prompt([
                 {
@@ -61,20 +64,10 @@ program
             .then(answers => {
                 // Token is in answers.token
                 console.log(answers);
+            })
+            .catch((err) => {
+                console.log(err);
             });
     });
 
 program.parse(process.argv);
-
-
-// program
-//     .option('-p, --peppers', 'Add peppers')
-//     .option('-P, --pineapple', 'Add pineapple')
-//     .option('-b, --bbq-sauce', 'Add bbq sauce')
-//     .option('-c, --cheese [type]', 'Add the specified type of cheese [marble]', 'marble')
-//     .parse(process.argv);
-// console.log('you ordered a pizza with:');
-// if (program.peppers) console.log('  - peppers');
-// if (program.pineapple) console.log('  - pineapple');
-// if (program.bbqSauce) console.log('  - bbq');
-// console.log('  - %s cheese', program.cheese);

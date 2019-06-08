@@ -19,8 +19,8 @@
 
 ### When User has token 
 
- - [ ] Give him query keyword option 
- - [ ] if keyword, find img by that keyword and give him options
- - [ ] else look for fallback keywords or fallback randomizer
+ - [x] Give him query keyword option 
+ - [x] if keyword, find img by that keyword and give him options
+ - [x] else look for fallback keywords or fallback randomizer
  - [ ] Allow him for follow collections and Users and add them(Meh) 
  - [ ] To be continued...
