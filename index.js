@@ -1,97 +1,76 @@
+#!/usr/bin/env node
 'use strict';
 
-const Unsplash = require('unsplash-js').default;
+const program = require('commander');
+const inquirer = require('inquirer');
 const fs = require('fs');
-const { toJson } = require('unsplash-js');
-const { bearerToken } = require('./config');
-const unsplash = new Unsplash({
-    bearerToken
-});
-const { downloadFromURL } = require('./download');
+const config = require('./config.json');
+const { heavyLift, randomUrlDownload } = require('./utils/main');
 
-const searchPhoto = (input, page_no) => {
-    return new Promise((resolve, reject) => {
-        unsplash.search.photos(input, page_no, 1)
-            .then(toJson)
-            .then((res) => {
-                if (res.errors) {
-                    return reject(res.errors[0]);
-                }
-                if (!res["total"]) {
-                    return reject("Required keyword has no photos");
-                }
-                return resolve(res);
-            })
-            .catch((err) => {
-                return reject(err);
-            })
+program
+    .version('0.0.1')
+    .description('Desktop Wallpaper');
+
+program
+    .command('url [imgurl]')
+    .alias('u')
+    .description('Add image from url( Wrap in double quotes )')
+    .action((imgurl) => {
+        randomUrlDownload(imgurl);
     });
-}
 
-const searchCollection = (input, page_no) => {
-    return new Promise((resolve, reject) => {
-        unsplash.search.collections(input, page_no, 1)
-            .then(toJson)
-            .then((res) => {
-                if (res.errors) {
-                    return Promise.reject(res.errors[0]);
-                }
-                if (!res["total"]) {
-                    return Promise.reject("Required keyword has no collections");
-                }
-                return resolve(res);
-            })
-            .catch((err) => {
-                return reject(err);
-            })
+program
+    .command('key [keyword]')
+    .alias('k')
+    .option('-c, --collection', 'Search from collection')
+    .description('Get Image with given keyword')
+    .action((keyword, cmd) => {
+        // collection option not implemented yet
+        let inp = keyword.toString().trim().toLowerCase();
+        let opt = (cmd.collection ? 'collection' : 'photo');
+        heavyLift(inp, opt);
     });
-}
 
-const searchDownload = (input, option, callback) => {
-    if (option === 'collection') {
-        searchCollection(input, 1)
-            .then((res) => {
-                const resultLen = res["total"];
-                let imgno = Math.floor(Math.random() * resultLen);
-                if (imgno === 0 && resultLen) {
-                    imgno += 1;
+program
+    .command('random')
+    .alias('r')
+    .description('Set a Random wallpaper')
+    .action(() => {
+        fs.readFile('preferences.txt', function (err, data) {
+            if (err) {
+                return heavyLift('wallpaper', 'photo');
+            }
+            var lines = data.toString().split('\n');
+            var keyName = lines[Math.floor(Math.random() * lines.length)] || 'wallpaper';
+            heavyLift(keyName, 'photo');
+        })
+    });
+
+program
+    .command('config')
+    .description('Set Unsplash API token. Visit https://unsplash.com/documentation#user-authentication')
+    .action(() => {
+        // Ask if user has token or not and decide accordingly (later)
+        inquirer
+            .prompt([
+                {
+                    type: 'input',
+                    name: 'token',
+                    message: 'Bearer Token: '
                 }
-                const url = res["results"][0]["cover_photo"]["urls"]["full"];
-                const imgName = res["results"][0]["id"];
-                console.log(url);
-                downloadFromURL(url, imgName)
+            ])
+            .then(answers => {
+                config.bearerToken = answers.token;
+                var json = JSON.stringify(config);
+                fs.writeFile('config.json', json, (err) => {
+                    if (err) {
+                        return console.log(err);
+                    }
+                });
             })
             .catch((err) => {
-                callback(err);
-            })
-    } else {
-        searchPhoto(input, 1)
-            .then((res) => {
-                const resultLen = res["total"];
-                let imgno = Math.floor(Math.random() * resultLen);
-                if (imgno === 0 && resultLen) {
-                    imgno += 1;
-                }
-                searchPhoto(input, imgno)
-                    .then((res) => {
-                        const url = res["results"][0]["urls"]["full"];
-                        const imgName = res["results"][0]["id"] + ".jpg";
-                        fs.appendFile('preferences.txt', input+'\n', function (err) {
-                            if (err) return;
-                        });
-                        // console.log(`Image URL: ${url}`);
-                        callback(undefined, url, imgName); // err is undefined
-                    })
-                    .catch((err) => {
-                        callback(err);
-                    })
-            })
-            .catch((err) => {
-                callback(err);
-            })
-    }
-}
+                console.log(err);
+            });
+    });
 
-module.exports = {
-    searchDownload
-}
+program.parse(process.argv);

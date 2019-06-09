@@ -1,5 +1,8 @@
-node_modules
+node_modules/
 package-lock.json
 config.js
 *.jpg
-images
+images/
+config.json
+preferences.txt
+play.js

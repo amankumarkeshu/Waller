@@ -1,19 +1,22 @@
 {
-  "name": "waller",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": ""
-  },
-  "author": "Sanskar Agarwal",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "commander": "^2.20.0",
-    "inquirer": "^6.3.1",
-    "node-fetch": "^2.6.0",
-    "open": "^6.3.0",
-    "request": "^2.88.0",
-    "unsplash-js": "^5.0.0"
-  }
+    "name": "waller",
+    "version": "1.0.0",
+    "description": "A command line utility to download and set images as desktop wallpaper",
+    "main": "waller.js",
+    "scripts": {
+        "test": ""
+    },
+    "author": "Sanskar Agarwal",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "chalk": "^2.4.2",
+        "commander": "^2.20.0",
+        "inquirer": "^6.3.1",
+        "node-fetch": "^2.6.0",
+        "open": "^6.3.0",
+        "progress": "^2.0.3",
+        "request": "^2.88.0",
+        "unsplash-js": "^5.0.0",
+        "validator": "^11.0.0"
+    }
 }
