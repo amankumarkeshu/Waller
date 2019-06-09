@@ -9,7 +9,7 @@ const { heavyLift, randomUrlDownload } = require('./utils/main');
 
 program
     .version('0.0.1')
-    .description('Desktop Wallpaper');
+    .description('Desktop Wallpaper Utility');
 
 program
     .command('url [imgurl]')

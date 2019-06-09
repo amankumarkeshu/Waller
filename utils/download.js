@@ -17,8 +17,8 @@ const downloadFromURL = (uri, filename) => {
             .on('response', (res) => {
                 var len = parseInt(res.headers['content-length'], 10);
                 console.log();
-                var bar = new ProgressBar(`${chalk.red('Downloading image')} [:bar] :rate/bps :percent :etas`, {
-                    complete: `${chalk.bgGreen(' ')}`,
+                var bar = new ProgressBar(`${chalk.green('Downloading image')} [:bar] :rate/bps :percent :etas`, {
+                    complete: '=',
                     incomplete: ' ',
                     width: 20,
                     total: len

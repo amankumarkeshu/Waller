@@ -5,7 +5,7 @@
 ## Requirements
 
  - Linux System
- - Generate an API token from [Unsplash](https://unsplash.com/documentation#user-authentication)
+ - Generate an API bearer token from [Unsplash](https://unsplash.com/documentation#user-authentication)
  - Node installed
 
 ## Getting Started 
@@ -23,9 +23,22 @@ $ npm install
 ```js
 const fetch = require('node-fetch');
 ```
-4. Run the following command and make sure /usr/bin/gsettings is returned. Go to [stackoverflow](https://askubuntu.com/questions/558446/my-dconf-gsettings-installation-is-broken-how-can-i-fix-it-without-ubuntu-reins) in case of any problem.
+4. Run the following command and make sure /usr/bin/gsettings is returned. Go to [askubuntu](https://askubuntu.com/questions/558446/my-dconf-gsettings-installation-is-broken-how-can-i-fix-it-without-ubuntu-reins) in case of any problem.
 ```sh
 $ which gsettings
+```
+5. Make an empty directory named 'images' to store wallpapers and empty json file named 'config.json' to store tokens.
+```sh
+$ mkdir images
+$ touch config.json
+```
+6. Run the following command to set up unsplash bearer token
+```sh
+$ node index.js config
+```
+6. Run index.js with node and explore commands
+```sh
+$ node index.js key <key_name> # <key_name> can be anything user wants to set as wallpaper e.g. mountain, space, landscape.
 ```
 
 ## Usage
@@ -45,6 +58,10 @@ Commands:
   random|r                   Set a Random wallpaper
   config                     Set Unsplash API token. Visit https://unsplash.com/documentation#user-authentication
 ```
+
+## Demo
+
+![Demo Image](demo/demo.gif)
 
 ## Problems Faced
  - **Problem**: Anaconda3 package interfered with Gsettings( An API that allows you to access key/value pairs (e.g., persistent application settings) without directly talking to the actual backend that stores that data (config files, gconf, dconf). ).<br/>

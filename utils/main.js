@@ -69,7 +69,7 @@ const randomUrlDownload = (imgurl) => {
                 })
         });
     } else {
-        console.log("Url is not a image url");
+        console.log("Above image url is not supported");
     }
 }
 
