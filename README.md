@@ -13,7 +13,7 @@
 1. Clone the directory or download the directory as a zip file<br>
 
 ```sh
-$ git clone https://github.com/skbro/Games-Arena.git
+$ git clone https://github.com/skbro/Waller.git
 ```
 2. Install all required Dependencies
 ```sh
@@ -36,7 +36,7 @@ $ touch config.json
 ```sh
 $ node index.js config
 ```
-6. Run index.js with node and explore commands
+7. Run index.js with node and explore commands
 ```sh
 $ node index.js key <key_name> # <key_name> can be anything user wants to set as wallpaper e.g. mountain, space, landscape.
 ```
