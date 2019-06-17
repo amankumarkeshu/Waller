@@ -14,6 +14,7 @@
 
 ```sh
 $ git clone https://github.com/skbro/Waller.git
+$ cd Waller
 ```
 2. Install all required Dependencies
 ```sh
@@ -27,10 +28,11 @@ const fetch = require('node-fetch');
 ```sh
 $ which gsettings
 ```
-5. Make an empty directory named 'images' to store wallpapers and empty json file named 'config.json' to store tokens.
+5. Make an empty directory named 'images' to store wallpapers and empty json file named 'config.json' to store tokens and add empty parentheses to file.
 ```sh
 $ mkdir images
 $ touch config.json
+$ echo "{}" > config.json
 ```
 6. Run the following command to set up unsplash bearer token
 ```sh
@@ -40,23 +42,27 @@ $ node index.js config
 ```sh
 $ node index.js key <key_name> # <key_name> can be anything user wants to set as wallpaper e.g. mountain, space, landscape.
 ```
+8. Run following command for any help
+```sh
+$ node index.js --help
+```
 
 ## Usage
 
 ```
 Usage: index [options] [command]
 
-Desktop Wallpaper
+Desktop Wallpaper Utility
 
 Options:
-  -V, --version              output the version number
-  -h, --help                 output usage information
+  -V, --version    output the version number
+  -h, --help       output usage information
 
 Commands:
-  url|u [imgurl]             Add image from url( Wrap in double quotes )
-  key|k [options] [keyword]  Get Image with given keyword
-  random|r                   Set a Random wallpaper
-  config                     Set Unsplash API token. Visit https://unsplash.com/documentation#user-authentication
+  url|u [imgurl]   Add image from url( Wrap in double quotes )
+  key|k [keyword]  Get Image with given keyword
+  random|r         Set a Random wallpaper
+  config           Set Unsplash API token. Visit https://unsplash.com/documentation#user-authentication
 ```
 
 ## Demo
@@ -73,7 +79,7 @@ Commands:
 ## Plans
 
 ### If user doesn't has Unsplash token
- - [ ] Use backup img from scrape.
+ - [ ] Use backup img.
 
 ### When User has token 
- - [ ] Allow him for follow collections and Users.
+ - [ ] Allow user to follow collections and Users.

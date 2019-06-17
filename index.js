@@ -22,12 +22,13 @@ program
 program
     .command('key [keyword]')
     .alias('k')
-    .option('-c, --collection', 'Search from collection')
+    // .option('-c, --collection', 'Search from collection')
     .description('Get Image with given keyword')
     .action((keyword, cmd) => {
         // collection option not implemented yet
         let inp = keyword.toString().trim().toLowerCase();
-        let opt = (cmd.collection ? 'collection' : 'photo');
+        // let opt = (cmd.collection ? 'collection' : 'photo');
+        let opt = 'photo';
         heavyLift(inp, opt);
     });
 
@@ -60,6 +61,10 @@ program
                 }
             ])
             .then(answers => {
+                let token = answers.token.toString().trim();
+                if (!token) {
+                    return;
+                }
                 config.bearerToken = answers.token;
                 var json = JSON.stringify(config);
                 fs.writeFile('config.json', json, (err) => {

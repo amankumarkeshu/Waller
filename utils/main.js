@@ -19,30 +19,35 @@ const heavyLift = (inp, opt) => {
                     type: 'list',
                     name: 'imgopt',
                     message: 'Wallpaper options',
-                    choices: ['1. Download only', '2. Download and Preview'],
-                    default: 'Download only',
+                    choices: ['1. Download only', '2. Download and Preview', '3. Preview only'],
+                    default: '1. Download only',
                     filter: function (val) {
-                        if (val[0] === '1') {
-                            return 1;
-                        }
-                        return 0;
+                        return Number(val[0]);
                     }
                 }
             ])
             .then(answers => {
-                downloadFromURL(url, imgName)
-                    .then((res) => {
-                        console.log(res);
-                        if (answers.imgopt === 0) {
-                            (async () => {
-                                await open(`images/${imgName}`);
-                            })();
-                        }
-                        setWallpaper(imgName);
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
+                if (answers.imgopt === 3) {
+                    (async () => {
+                        await open(url);
+                    })();
+                } else {
+                    downloadFromURL(url, imgName)
+                        .then((res) => {
+                            console.log(res);
+                            if (answers.imgopt === 1) {
+                                setWallpaper(imgName);
+                            } else {
+                                (async () => {
+                                    await open(`images/${imgName}`);
+                                })();
+                                setWallpaper(imgName);
+                            }
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        });
+                }
             })
             .catch((err) => {
                 console.log(err);

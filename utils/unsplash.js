@@ -3,11 +3,10 @@
 const Unsplash = require('unsplash-js').default;
 const fs = require('fs');
 const { toJson } = require('unsplash-js');
-const { bearerToken } = require('./../config.json');
+const { bearerToken } = require('./../config.json') || undefined;
 const unsplash = new Unsplash({
     bearerToken
 });
-const { downloadFromURL } = require('./download');
 
 const searchPhoto = (input, page_no) => {
     return new Promise((resolve, reject) => {
@@ -48,24 +47,27 @@ const searchCollection = (input, page_no) => {
 }
 
 const searchDownload = (input, option, callback) => {
+    if (!bearerToken) {
+        return console.log(`Please add a Unsplash API token`);
+    }
     if (option === 'collection') {
         // Will do it later
-        searchCollection(input, 1)
-            .then((res) => {
-                const resultLen = res["total"];
-                let imgno = Math.floor(Math.random() * resultLen);
-                if (imgno === 0 && resultLen) {
-                    imgno += 1;
-                }
-                const url = res["results"][0]["cover_photo"]["urls"]["full"];
-                const imgName = res["results"][0]["id"];
-                console.log(url);
-                downloadFromURL(url, imgName)
-            })
-            .catch((err) => {
-                callback(err);
-            })
-    } else {
+        // searchCollection(input, 1)
+        //     .then((res) => {
+        //         const resultLen = res["total"];
+        //         let imgno = Math.floor(Math.random() * resultLen);
+        //         if (imgno === 0 && resultLen) {
+        //             imgno += 1;
+        //         }
+        //         const url = res["results"][0]["cover_photo"]["urls"]["full"];
+        //         const imgName = res["results"][0]["id"];
+        //         console.log(url);
+        //         downloadFromURL(url, imgName)
+        //     })
+        //     .catch((err) => {
+        //         callback(err);
+        //     })
+    } else { // photo 
         searchPhoto(input, 1)
             .then((res) => {
                 const resultLen = res["total"];

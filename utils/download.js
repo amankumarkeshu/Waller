@@ -15,9 +15,11 @@ const downloadFromURL = (uri, filename) => {
                 return reject(err);
             })
             .on('response', (res) => {
-                var len = parseInt(res.headers['content-length'], 10);
-                console.log();
-                var bar = new ProgressBar(`${chalk.green('Downloading image')} [:bar] :rate/bps :percent :etas`, {
+                var len = Math.floor(res.headers['content-length']);
+                if(!len) {
+                    return reject('Not a valid image URL');
+                }
+                var bar = new ProgressBar(`${chalk.green('Downloading image')} [:bar] :percent :etas`, {
                     complete: '=',
                     incomplete: ' ',
                     width: 20,
