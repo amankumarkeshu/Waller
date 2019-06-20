@@ -6,3 +6,4 @@ images/
 config.json
 preferences.txt
 play.js
+tests/

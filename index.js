@@ -16,6 +16,7 @@ program
     .alias('u')
     .description('Add image from url( Wrap in double quotes )')
     .action((imgurl) => {
+        imgurl = imgurl.toString().trim();
         randomUrlDownload(imgurl);
     });
 

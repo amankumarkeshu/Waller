@@ -3,10 +3,10 @@
 const inquirer = require('inquirer');
 const open = require('open');
 const crypto = require('crypto');
-const { downloadFromURL } = require('./download');
+const { downloadFromURL, getContentHeader } = require('./download');
 const { searchDownload } = require('./unsplash');
 const { setWallpaper } = require('./exec');
-const { isURL } = require('validator');
+const { isURL, isDataURI } = require('validator');
 
 const heavyLift = (inp, opt) => {
     searchDownload(inp, opt, (err, url, imgName) => {
@@ -55,26 +55,98 @@ const heavyLift = (inp, opt) => {
     });
 }
 
+const downloadAndSave = (imgurl, mime) => {
+    let mimeType = mime || 'jpg';
+    crypto.randomBytes(5, (err, buffer) => {
+        if (err) {
+            return console.log("Some error occured");
+        }
+        let name = `${buffer.toString('hex')}.${mimeType}`;
+        downloadFromURL(imgurl, name)
+            .then((res) => {
+                console.log(res);
+                setWallpaper(name);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    });
+}
+
 const randomUrlDownload = (imgurl) => {
-    imgurl = imgurl.toString();
-    if (isURL(imgurl)) {
-        var mime = 'jpg';
-        crypto.randomBytes(5, (err, buffer) => {
-            if (err) {
-                return console.log("Some error occured");
-            }
-            var name = `${buffer.toString('hex')}.${mime}`;
-            downloadFromURL(imgurl, name)
+    imgurl = imgurl.toString().trim();
+    switch (true) {
+        case isURL(imgurl):
+            getContentHeader(imgurl)
                 .then((res) => {
-                    console.log(res);
-                    setWallpaper(name);
+                    let header = res.header, mimeObj = res.mimeObj;
+                    if (!header && !mimeObj) {
+                        console.log(`Provided URL doesn't support images`);
+                    } else if (header && !mimeObj) {
+                        if (header.substr(0, 5) !== 'image') {
+                            inquirer
+                                .prompt([
+                                    {
+                                        type: 'confirm',
+                                        name: 'userConfirm',
+                                        message: `Given URL isn't a image, Do you still want to download?`,
+                                        default: false
+                                    }
+                                ])
+                                .then(answers => {
+                                    if (answers.userConfirm === true) {
+                                        downloadAndSave(imgurl, undefined);
+                                    } else {
+                                        console.log('Image not downloaded');
+                                    }
+                                })
+                                .catch((err) => {
+                                    console.log(err);
+                                });
+                        } else {
+                            inquirer
+                                .prompt([
+                                    {
+                                        type: 'confirm',
+                                        name: 'userConfirm',
+                                        message: `Given URL may not be an image, Do you still want to download?`,
+                                        default: false
+                                    }
+                                ])
+                                .then(answers => {
+                                    if (answers.userConfirm === true) {
+                                        downloadAndSave(imgurl, undefined);
+                                    } else {
+                                        console.log('Image not downloaded');
+                                    }
+                                })
+                                .catch((err) => {
+                                    console.log(err);
+                                });
+                        }
+                    } else if (!header && mimeObj) {
+                        if (mimeObj.mime.toString().substr(0, 5) === 'image') {
+                            downloadAndSave(imgurl, mimeObj.ext.toString());
+                        } else {
+                            console.log(`Provided URL isn't a proper image type`);
+                        }
+                    } else {
+                        if (header.substr(0, 5) === 'image' || (mimeObj.mime.toString().substr(0, 5) === 'image')) {
+                            downloadAndSave(imgurl, mimeObj.ext.toString() || undefined);
+                        } else {
+                            console.log(`Provided URL isn't a proper image type`);
+                        }
+                    }
                 })
                 .catch((err) => {
                     console.log(err);
                 })
-        });
-    } else {
-        console.log("Above image url is not supported");
+            break;
+        case isDataURI(imgurl):
+            console.log("A data url");
+            break;
+        default:
+            console.log("Not supported");
     }
 }
 

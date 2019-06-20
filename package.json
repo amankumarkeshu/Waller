@@ -4,13 +4,14 @@
     "description": "A command line utility to download and set images as desktop wallpaper",
     "main": "waller.js",
     "scripts": {
-        "test": ""
+        "start": "node index.js"
     },
     "author": "Sanskar Agarwal",
     "license": "Apache-2.0",
     "dependencies": {
         "chalk": "^2.4.2",
         "commander": "^2.20.0",
+        "file-type": "^12.0.0",
         "inquirer": "^6.3.1",
         "node-fetch": "^2.6.0",
         "open": "^6.3.0",
