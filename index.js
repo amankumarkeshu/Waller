@@ -5,7 +5,8 @@ const program = require('commander');
 const inquirer = require('inquirer');
 const fs = require('fs');
 const config = require('./config.json');
-const { heavyLift, randomUrlDownload } = require('./utils/main');
+const { downloadAndSave, randomUrlDownload } = require('./utils/main');
+const { searchKey } = require('./utils/unsplash');
 
 program
     .version('0.0.1')
@@ -23,14 +24,15 @@ program
 program
     .command('key [keyword]')
     .alias('k')
-    // .option('-c, --collection', 'Search from collection')
     .description('Get Image with given keyword')
     .action((keyword, cmd) => {
-        // collection option not implemented yet
         let inp = keyword.toString().trim().toLowerCase();
-        // let opt = (cmd.collection ? 'collection' : 'photo');
-        let opt = 'photo';
-        heavyLift(inp, opt);
+        searchKey(inp, (err, url) => {
+            if (err) {
+                return console.log(err);
+            }
+            downloadAndSave(url, undefined);
+        });
     });
 
 program
@@ -40,11 +42,21 @@ program
     .action(() => {
         fs.readFile('preferences.txt', function (err, data) {
             if (err) {
-                return heavyLift('wallpaper', 'photo');
+                return searchKey('wallpaper', 'photo', (err, url) => {
+                    if (err) {
+                        return console.log(err);
+                    }
+                    downloadAndSave(url, undefined);
+                });
             }
             var lines = data.toString().split('\n');
             var keyName = lines[Math.floor(Math.random() * lines.length)] || 'wallpaper';
-            heavyLift(keyName, 'photo');
+            searchKey(keyName, 'photo', (err, url) => {
+                if (err) {
+                    return console.log(err);
+                }
+                downloadAndSave(url, undefined);
+            });
         })
     });
 

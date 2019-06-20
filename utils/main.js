@@ -4,35 +4,36 @@ const inquirer = require('inquirer');
 const open = require('open');
 const crypto = require('crypto');
 const { downloadFromURL, getContentHeader } = require('./download');
-const { searchDownload } = require('./unsplash');
 const { setWallpaper } = require('./exec');
 const { isURL, isDataURI } = require('validator');
 
-const heavyLift = (inp, opt) => {
-    searchDownload(inp, opt, (err, url, imgName) => {
-        if (err) {
-            return console.log(err);
-        }
-        inquirer
-            .prompt([
-                {
-                    type: 'list',
-                    name: 'imgopt',
-                    message: 'Wallpaper options',
-                    choices: ['1. Download only', '2. Download and Preview', '3. Preview only'],
-                    default: '1. Download only',
-                    filter: function (val) {
-                        return Number(val[0]);
-                    }
+const downloadAndSave = (imgurl, mime) => {
+    inquirer
+        .prompt([
+            {
+                type: 'list',
+                name: 'imgopt',
+                message: 'Wallpaper options',
+                choices: ['1. Download only', '2. Download and Preview', '3. Preview only'],
+                default: '1. Download only',
+                filter: function (val) {
+                    return Number(val[0]);
                 }
-            ])
-            .then(answers => {
-                if (answers.imgopt === 3) {
-                    (async () => {
-                        await open(url);
-                    })();
-                } else {
-                    downloadFromURL(url, imgName)
+            }
+        ])
+        .then(answers => {
+            if (answers.imgopt === 3) {
+                (async () => {
+                    await open(imgurl);
+                })();
+            } else {
+                let mimeType = mime || 'jpg';
+                crypto.randomBytes(5, (err, buffer) => {
+                    if (err) {
+                        return console.log("Some error occured");
+                    }
+                    let imgName = `${buffer.toString('hex')}.${mimeType}`;
+                    downloadFromURL(imgurl, imgName)
                         .then((res) => {
                             console.log(res);
                             if (answers.imgopt === 1) {
@@ -46,31 +47,13 @@ const heavyLift = (inp, opt) => {
                         })
                         .catch((err) => {
                             console.log(err);
-                        });
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    });
-}
-
-const downloadAndSave = (imgurl, mime) => {
-    let mimeType = mime || 'jpg';
-    crypto.randomBytes(5, (err, buffer) => {
-        if (err) {
-            return console.log("Some error occured");
-        }
-        let name = `${buffer.toString('hex')}.${mimeType}`;
-        downloadFromURL(imgurl, name)
-            .then((res) => {
-                console.log(res);
-                setWallpaper(name);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-    });
+                        })
+                });
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        });
 }
 
 const randomUrlDownload = (imgurl) => {
@@ -80,6 +63,7 @@ const randomUrlDownload = (imgurl) => {
             getContentHeader(imgurl)
                 .then((res) => {
                     let header = res.header, mimeObj = res.mimeObj;
+                    console.log(header.substr(0, 5), mimeObj.ext);
                     if (!header && !mimeObj) {
                         console.log(`Provided URL doesn't support images`);
                     } else if (header && !mimeObj) {
@@ -151,6 +135,6 @@ const randomUrlDownload = (imgurl) => {
 }
 
 module.exports = {
-    heavyLift,
+    downloadAndSave,
     randomUrlDownload
 }
