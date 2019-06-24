@@ -63,7 +63,6 @@ const randomUrlDownload = (imgurl) => {
             getContentHeader(imgurl)
                 .then((res) => {
                     let header = res.header, mimeObj = res.mimeObj;
-                    console.log(header.substr(0, 5), mimeObj.ext);
                     if (!header && !mimeObj) {
                         console.log(`Provided URL doesn't support images`);
                     } else if (header && !mimeObj) {

@@ -42,7 +42,7 @@ program
     .action(() => {
         fs.readFile('preferences.txt', function (err, data) {
             if (err) {
-                return searchKey('wallpaper', 'photo', (err, url) => {
+                return searchKey('wallpaper', (err, url) => {
                     if (err) {
                         return console.log(err);
                     }
@@ -51,7 +51,7 @@ program
             }
             var lines = data.toString().split('\n');
             var keyName = lines[Math.floor(Math.random() * lines.length)] || 'wallpaper';
-            searchKey(keyName, 'photo', (err, url) => {
+            searchKey(keyName, (err, url) => {
                 if (err) {
                     return console.log(err);
                 }
